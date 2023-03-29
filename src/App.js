@@ -1,5 +1,5 @@
 import React from 'react'
-import Inputfields from './inputform'
+import Inputfields from './Inputfields'
 
 const App = () => {
   return (
