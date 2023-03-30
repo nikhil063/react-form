@@ -111,8 +111,7 @@ const Inputfields = () => {
         </fieldset>
         ))}
       <div>
-        {copy.map((ele) => {
-          return (
+        {copy.map((ele) => (
             <div key={ele.id}>
               <table style={{ padding: "10px 0px", width: "100%", textAlign: "left" }}>
                 <tr>
@@ -138,7 +137,7 @@ const Inputfields = () => {
               </table><br />
             </div>
           )
-        })}
+        )}
      
       </div>
     </>
