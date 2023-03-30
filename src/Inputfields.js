@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-// import validation from './validation';
 
 const Inputfields = () => {
   const [inputValue, setInputValue] = useState({
@@ -14,93 +13,37 @@ const Inputfields = () => {
     tandc: ''
   });
 
+  const [formErrors, setFormErrors] = useState([]);
+
   const [copy, setCopy] = useState([]);
-  const [error, setError] = useState({
-    fname: '',
-    lname: '',
-    email: '',
-    mobile: '',
-    password: '',
-    cpassword: '',
-    country: '',
-    gender: '',
-    tandc: ''
-  });
 
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setInputValue({ ...inputValue, [name]: value })
-    validate(e);
-  }
-
-  const validate = (e) => {
-    let name = e.target.name;
-    setError((prev) => {
-      const obj = { ...prev, [name]: "" };
-      switch (name) {
-        case "email":
-          let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-          if (mailformat.test(inputValue.email)) {
-            obj[name] = "";
-          }
-          else{
-            obj[name] = "Invalid email format";
-          }
-          break;
-
-        case "password":
-          if (inputValue.password.length < 6) {
-            obj[name] = "Password must contain at least 6 characters";
-          }
-          break;
-
-          // case "mobile":
-          //   if(inputValue.mobile.length<10){
-          //     obj[name]="Invalid phone number"
-          //   }
-
-        case "password":
-          if (inputValue.password.length < 5) {
-            obj[name] = "Password must contain at least 6 characters"
-          }
-          break;
-
-        // case "cpassword":
-        //   if (inputValue.password !== inputValue.cpassword) {
-        //     obj[name] = "Both passwordds must match";
-        //   }
-        //     else if (inputValue.password === inputValue.cpassword){
-        //       obj[name]=""
-        //     }
-        // break;
-
-        case "cpassword":
-          if (inputValue.cpassword !== inputValue.password) {
-            obj[name] = "Passwords do not match";
-          } else {
-            obj[name] = "";
-          }
-          break;
-
-        default:
-          break;
-      }
-      return obj;
-    })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const inputCopy = { ...inputValue, id: Math.random() }
-    setCopy([...copy, inputCopy]);
-    setInputValue({ fname: '', lname: '', mobile: '', email: '', password: '', cpassword: '', country: '', gender: '', tandc: '' });
-  }
 
+    const errors = [];
+    if (!inputValue.fname) errors.push("First name is required");
+    if (!inputValue.lname) errors.push("Last name is required");
+    if (!inputValue.email) errors.push("Email is required");
+    if (!/\S+@\S+\.\S+/.test(inputValue.email)) errors.push("Email is invalid");
+    if (inputValue.password.length<6) errors.push("Password should have at least 6 characters");
+    if (inputValue.password !== inputValue.cpassword) errors.push("Passwords do not match");
+    if (!inputValue.gender) errors.push("Enter a gender")
+    setFormErrors(errors);
+    if (errors.length === 0) {
+      const inputCopy = { ...inputValue, id: Math.random() }
+        setCopy([...copy, inputCopy]);
+        setInputValue({ fname: '', lname: '', mobile: '', email: '', password: '', cpassword: '', country: '', gender: false, tandc: false });
+      }
+  }
 
   return (
     <>
-
       <form id="myForm" className='myForm' onSubmit={handleSubmit}>
         <div>
 
@@ -116,9 +59,7 @@ const Inputfields = () => {
 
           <fieldset style={{ width: "250px" }}>
             <legend>Email</legend>
-            <input value={inputValue.email} required onChange={handleInput} name="email" type='email' placeholder='example@email.com'
-            />
-            {error.email && <p style={{ color: "red", fontSize: "13px" }}>{error.email}</p>}
+            <input value={inputValue.email} required onChange={handleInput} name="email" type='email' placeholder='example@email.com' />
           </fieldset>
 
           <fieldset style={{ width: "250px" }}>
@@ -132,8 +73,6 @@ const Inputfields = () => {
 
             <legend>Confirm password</legend>
             <input value={inputValue.cpassword} required onChange={handleInput} name="cpassword" type='password' />
-            {error.password && <p style={{ color: "red", fontSize: "13px" }}>{error.password}</p>}
-            {error.cpassword && <p style={{ color: "red", fontSize: "13px" }}>{error.cpassword}</p>}
 
           </fieldset>
 
@@ -163,8 +102,14 @@ const Inputfields = () => {
         <div>
           <button type='submit' style={{ padding: "10px 35px", margin: "10px 0px" }}>Submit</button>
         </div>
-      
+
       </form>
+      {formErrors.map((item)=>(
+      <fieldset style={{color:"red", width: "250px",fontSize:"13px"}} >
+        <legend style={{fontWeight:"bold", color:"red"}}>Error!</legend> 
+        {item}
+        </fieldset>
+        ))}
       <div>
         {copy.map((ele) => {
           return (
@@ -186,15 +131,15 @@ const Inputfields = () => {
                   <td style={{ border: "1px solid black", padding: "8px" }}>{ele.email}</td>
                   <td style={{ border: "1px solid black" }}>{ele.mobile}</td>
                   <td style={{ border: "1px solid black" }}>{ele.password}</td>
-                  
+
                   <td style={{ border: "1px solid black" }}>{ele.country}</td>
                   <td style={{ border: "1px solid black" }}>{ele.gender}</td>
                 </tr>
               </table><br />
-
             </div>
           )
         })}
+     
       </div>
     </>
   )
